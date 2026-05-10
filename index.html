@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="pl">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>R10: Swinoujscie - Hel</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <section class="intro">
+        <div>
+          <p class="eyebrow">8-13 czerwca · 6 dni jazdy · R10</p>
+          <h1>Swinoujscie - Hel</h1>
+          <p class="lead">
+            Zwarty plan wycieczki z dziennymi odcinkami, miejscami wartymi postoju,
+            mapa Google oraz profil przewyzszen pobierany z Google Maps API.
+          </p>
+        </div>
+        <aside class="summary-panel" aria-label="Podsumowanie trasy">
+          <div>
+            <span id="totalDistance">~455 km</span>
+            <small>dystans rowerem</small>
+          </div>
+          <div>
+            <span>6</span>
+            <small>dni jazdy</small>
+          </div>
+          <div>
+            <span id="totalClimb">-- m</span>
+            <small>suma podejsc</small>
+          </div>
+        </aside>
+      </section>
+
+      <section class="map-grid">
+        <div class="map-card">
+          <div id="map" aria-label="Mapa trasy"></div>
+          <div id="mapNotice" class="map-notice">
+            Wpisz klucz Google Maps API w lokalnym <code>config.js</code>, aby
+            zaladowac trase, odcinki i przewyzszenia.
+          </div>
+        </div>
+
+        <aside class="controls" aria-label="Sterowanie mapa">
+          <div class="section-heading">
+            <p class="eyebrow">Odcinki</p>
+            <h2>Plan dzienny</h2>
+          </div>
+          <div id="segmentList" class="segment-list"></div>
+          <button id="showAll" class="ghost-button" type="button">Pokaz cala trase</button>
+        </aside>
+      </section>
+
+      <section class="visuals">
+        <div class="distance-panel">
+          <div class="section-heading">
+            <p class="eyebrow">Rozklad wysilku</p>
+            <h2>Dystans dzien po dniu</h2>
+          </div>
+          <div id="distanceBars" class="distance-bars"></div>
+        </div>
+
+        <div class="elevation-panel">
+          <div class="section-heading">
+            <p class="eyebrow">Google Elevation API</p>
+            <h2>Profil terenu</h2>
+          </div>
+          <canvas id="elevationCanvas" width="960" height="300"></canvas>
+          <div id="elevationStats" class="elevation-stats">
+            <span>Przewyzszenia zostana wyliczone po zaladowaniu mapy.</span>
+          </div>
+        </div>
+      </section>
+
+      <section class="details">
+        <div class="section-heading">
+          <p class="eyebrow">Postoje</p>
+          <h2>Najwazniejsze miejsca na trasie</h2>
+        </div>
+        <div id="attractions" class="attractions-grid"></div>
+      </section>
+
+      <section class="logistics">
+        <div>
+          <p class="eyebrow">Koncowka</p>
+          <h2>Hel - Gdynia</h2>
+        </div>
+        <p>
+          Plan zaklada dojazd rowerem do Helu, a potem prom lub pociag do Gdyni.
+          To zostawia zapas przed nocnym pociagiem do Krakowa i zmniejsza ryzyko
+          przeciagania ostatniego dnia. Trasy rowerowe wyznaczane przez Google
+          moga miejscami wymagac weryfikacji w terenie, zwlaszcza przy drogach
+          gruntowych, robotach i odcinkach parkowych.
+        </p>
+      </section>
+    </main>
+
+    <script src="config.js"></script>
+    <script src="app.js"></script>
+  </body>
+</html>
