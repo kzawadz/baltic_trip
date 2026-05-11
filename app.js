@@ -109,6 +109,9 @@ let segmentPolylines = [];
 let overviewPolyline;
 let attractionMarkers = [];
 let routePath = [];
+let segmentRoutePaths = segments.map((segment) => segment.waypoints);
+let isFullRouteSelected = false;
+let elevationRequestId = 0;
 let AdvancedMarkerElement;
 let PinElement;
 let ElevationService;
@@ -238,7 +241,9 @@ function drawApproxRoute() {
 
 function requestRoutes() {
   if (!Route) {
-    requestElevation(routePoints);
+    routePath = routePoints;
+    segmentRoutePaths = segments.map((segment) => segment.waypoints);
+    updateElevationForCurrentSelection();
     return;
   }
 
@@ -246,15 +251,17 @@ function requestRoutes() {
       const resolvedPaths = paths.map((path, index) =>
         path.length ? path : segments[index].waypoints,
       );
+      segmentRoutePaths = resolvedPaths;
+      routePath = resolvedPaths.flat();
 
       if (!paths.some((path) => path.length)) {
-        requestElevation(routePoints);
+        routePath = routePoints;
+        updateElevationForCurrentSelection();
         return;
       }
 
       segmentPolylines.forEach((polyline) => polyline.setMap(null));
       overviewPolyline.setMap(null);
-      routePath = resolvedPaths.flat();
       overviewPolyline = new google.maps.Polyline({
         path: routePath,
         strokeColor: "#1f2a2e",
@@ -272,8 +279,11 @@ function requestRoutes() {
           map,
         });
       });
-      requestElevation(routePath, routePoints);
-      focusSegment(activeSegment);
+      if (isFullRouteSelected) {
+        showFullRoute();
+      } else {
+        focusSegment(activeSegment);
+      }
     });
 }
 
@@ -329,6 +339,7 @@ function addAttractionMarkers() {
 
 function focusSegment(index) {
   activeSegment = index;
+  isFullRouteSelected = false;
   document.querySelectorAll(".segment-button").forEach((button) => {
     button.classList.toggle("is-active", Number(button.dataset.index) === index);
   });
@@ -350,18 +361,37 @@ function focusSegment(index) {
     segments[index].waypoints.forEach((point) => segmentBounds.extend(point));
   }
   map.fitBounds(segmentBounds, 64);
+  updateElevationForCurrentSelection();
 }
 
 function showFullRoute() {
+  isFullRouteSelected = true;
   document.querySelectorAll(".segment-button").forEach((button) => button.classList.remove("is-active"));
   if (!map) return;
   segmentPolylines.forEach((polyline) => {
     polyline.setOptions({ strokeOpacity: 0.9, strokeWeight: 5 });
   });
   map.fitBounds(bounds, 44);
+  updateElevationForCurrentSelection();
 }
 
-function requestElevation(path, fallbackPath = null) {
+function updateElevationForCurrentSelection() {
+  if (isFullRouteSelected) {
+    updateElevationTitle("cala trasa");
+    requestElevation(routePath.length ? routePath : routePoints, routePoints);
+    return;
+  }
+
+  updateElevationTitle(segments[activeSegment].title);
+  const segmentPath = segmentRoutePaths[activeSegment] || segments[activeSegment].waypoints;
+  requestElevation(segmentPath, segments[activeSegment].waypoints);
+}
+
+function updateElevationTitle(scope) {
+  document.getElementById("elevationTitle").textContent = `Profil terenu - ${scope}`;
+}
+
+function requestElevation(path, fallbackPath = null, requestId = ++elevationRequestId) {
   if (!ElevationService || !path.length) {
     drawEmptyElevation("Biblioteka Elevation nie zostala zaladowana.");
     return;
@@ -379,12 +409,14 @@ function requestElevation(path, fallbackPath = null) {
       samples: 256,
     },
     (results, status) => {
+      if (requestId !== elevationRequestId) return;
+
       if (status !== "OK" || !results?.length) {
         if (fallbackPath?.length) {
           console.warn(
             `ElevationService failed for detailed route (${status}). Retrying with planned stops.`,
           );
-          requestElevation(fallbackPath);
+          requestElevation(fallbackPath, null, requestId);
           return;
         }
         showElevationError(status);
