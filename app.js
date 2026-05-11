@@ -519,7 +519,7 @@ function addTrainStationMarkers() {
     const pin = new PinElement({
       background: "#2766ad",
       borderColor: "#ffffff",
-      glyph: "PKP",
+      glyphText: "PKP",
       glyphColor: "#ffffff",
       scale: 0.74,
     });
