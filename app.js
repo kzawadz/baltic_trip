@@ -102,12 +102,35 @@ const routePoints = segments.flatMap((segment, index) =>
   index === 0 ? segment.waypoints : segment.waypoints.slice(1),
 );
 
+const normalRideSpeedKmh = 17;
+
+const trainStations = [
+  { name: "Swinoujscie", lat: 53.9106, lng: 14.2474, note: "start trasy" },
+  { name: "Miedzyzdroje", lat: 53.9294, lng: 14.4508, note: "blisko WPN i klifow" },
+  { name: "Kamien Pomorski", lat: 53.9689, lng: 14.7736, note: "awaryjnie dla okolic Dziwnowa" },
+  { name: "Trzebiatow", lat: 54.0611, lng: 15.2684, note: "awaryjnie dla odcinka Rewal - Kolobrzeg" },
+  { name: "Kolobrzeg", lat: 54.1803, lng: 15.5688, note: "duzy wezel po 2. etapie" },
+  { name: "Mielno Koszalinskie", lat: 54.2532, lng: 16.0546, note: "stacja sezonowa przy Mielnie" },
+  { name: "Koszalin", lat: 54.1906, lng: 16.1817, note: "wiekszy wezel przy trasie" },
+  { name: "Darlowo", lat: 54.4209, lng: 16.4098, note: "dojazd do Darlowka" },
+  { name: "Slawno", lat: 54.3619, lng: 16.6787, note: "awaryjny wezel przed Ustka" },
+  { name: "Ustka", lat: 54.5805, lng: 16.8619, note: "wygodny punkt przerwania etapu" },
+  { name: "Slupsk", lat: 54.4642, lng: 17.0287, note: "duzy wezel poza linia wybrzeza" },
+  { name: "Leba", lat: 54.7589, lng: 17.5575, note: "przy Slowinskim Parku Narodowym" },
+  { name: "Wladyslawowo", lat: 54.7917, lng: 18.4013, note: "poczatek polwyspu" },
+  { name: "Chalupy", lat: 54.7604, lng: 18.5109, note: "awaryjnie na polwyspie" },
+  { name: "Jastarnia", lat: 54.6965, lng: 18.6788, note: "srodek polwyspu" },
+  { name: "Jurata", lat: 54.6764, lng: 18.7187, note: "blisko koncowki" },
+  { name: "Hel", lat: 54.6081, lng: 18.8014, note: "koniec trasy" },
+];
+
 let map;
 let bounds;
 let activeSegment = 0;
 let segmentPolylines = [];
 let overviewPolyline;
 let attractionMarkers = [];
+let trainStationMarkers = [];
 let routePath = [];
 let segmentRoutePaths = segments.map((segment) => segment.waypoints);
 let isFullRouteSelected = false;
@@ -148,7 +171,7 @@ function initStaticUi() {
         <div class="bar-row" style="--segment-color: ${segment.color}; --bar-width: ${(segment.distance / maxDistance) * 100}%">
           <span>${segment.date.split(" ")[0]}</span>
           <span class="bar-track"><span class="bar-fill"></span></span>
-          <span>${segment.distance} km</span>
+          <span>${segment.distance} km / ${formatRideTime(segment.distance)}</span>
         </div>
       `,
     )
@@ -167,7 +190,17 @@ function initStaticUi() {
     .join("");
 
   document.getElementById("showAll").addEventListener("click", showFullRoute);
+  document.getElementById("toggleStations").addEventListener("change", (event) => {
+    setTrainStationsVisible(event.target.checked);
+  });
   drawEmptyElevation();
+}
+
+function formatRideTime(distanceKm) {
+  const totalMinutes = Math.round((distanceKm / normalRideSpeedKmh) * 60);
+  const hours = Math.floor(totalMinutes / 60);
+  const minutes = totalMinutes % 60;
+  return `${hours} h ${String(minutes).padStart(2, "0")} min`;
 }
 
 window.initTripMap = async function initTripMap() {
@@ -193,6 +226,7 @@ window.initTripMap = async function initTripMap() {
 
   drawApproxRoute();
   addAttractionMarkers();
+  addTrainStationMarkers();
   requestRoutes();
   focusSegment(0);
 };
@@ -335,6 +369,36 @@ function addAttractionMarkers() {
       return marker;
     }),
   );
+}
+
+function addTrainStationMarkers() {
+  trainStationMarkers = trainStations.map((station) => {
+    const pin = new PinElement({
+      background: "#2766ad",
+      borderColor: "#ffffff",
+      glyph: "PKP",
+      glyphColor: "#ffffff",
+      scale: 0.74,
+    });
+    const marker = new AdvancedMarkerElement({
+      position: { lat: station.lat, lng: station.lng },
+      title: `PKP ${station.name}`,
+      content: pin,
+      gmpClickable: true,
+    });
+    const info = new google.maps.InfoWindow({
+      content: `<strong>PKP ${station.name}</strong><br><span>${station.note}</span>`,
+    });
+    marker.addEventListener("gmp-click", () => info.open({ anchor: marker, map }));
+    return marker;
+  });
+  setTrainStationsVisible(document.getElementById("toggleStations").checked);
+}
+
+function setTrainStationsVisible(isVisible) {
+  trainStationMarkers.forEach((marker) => {
+    marker.map = isVisible ? map : null;
+  });
 }
 
 function focusSegment(index) {

@@ -164,6 +164,28 @@ h2 {
   margin-bottom: 16px;
 }
 
+.map-option {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  min-height: 44px;
+  margin-bottom: 12px;
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: #fbfaf7;
+  color: var(--ink);
+  font-size: 0.9rem;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.map-option input {
+  width: 18px;
+  height: 18px;
+  accent-color: var(--blue);
+  cursor: pointer;
+}
+
 .segment-list {
   display: grid;
   gap: 10px;
@@ -256,7 +278,7 @@ h2 {
 
 .bar-row {
   display: grid;
-  grid-template-columns: 66px minmax(0, 1fr) 62px;
+  grid-template-columns: 66px minmax(0, 1fr) 138px;
   gap: 10px;
   align-items: center;
   color: var(--muted);
@@ -397,6 +419,10 @@ h2 {
   }
 
   .bar-row {
-    grid-template-columns: 56px minmax(0, 1fr) 52px;
+    grid-template-columns: 56px minmax(0, 1fr);
+  }
+
+  .bar-row > span:last-child {
+    grid-column: 2;
   }
 }
