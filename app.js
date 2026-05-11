@@ -105,24 +105,133 @@ const routePoints = segments.flatMap((segment, index) =>
 const normalRideSpeedKmh = 17;
 
 const trainStations = [
-  { name: "Swinoujscie", lat: 53.9106, lng: 14.2474, note: "start trasy" },
-  { name: "Miedzyzdroje", lat: 53.9294, lng: 14.4508, note: "blisko WPN i klifow" },
-  { name: "Kamien Pomorski", lat: 53.9689, lng: 14.7736, note: "awaryjnie dla okolic Dziwnowa" },
-  { name: "Trzebiatow", lat: 54.0611, lng: 15.2684, note: "awaryjnie dla odcinka Rewal - Kolobrzeg" },
-  { name: "Kolobrzeg", lat: 54.1803, lng: 15.5688, note: "duzy wezel po 2. etapie" },
-  { name: "Mielno Koszalinskie", lat: 54.2532, lng: 16.0546, note: "stacja sezonowa przy Mielnie" },
-  { name: "Koszalin", lat: 54.1906, lng: 16.1817, note: "wiekszy wezel przy trasie" },
-  { name: "Darlowo", lat: 54.4209, lng: 16.4098, note: "dojazd do Darlowka" },
-  { name: "Slawno", lat: 54.3619, lng: 16.6787, note: "awaryjny wezel przed Ustka" },
-  { name: "Ustka", lat: 54.5805, lng: 16.8619, note: "wygodny punkt przerwania etapu" },
-  { name: "Slupsk", lat: 54.4642, lng: 17.0287, note: "duzy wezel poza linia wybrzeza" },
-  { name: "Leba", lat: 54.7589, lng: 17.5575, note: "przy Slowinskim Parku Narodowym" },
-  { name: "Wladyslawowo", lat: 54.7917, lng: 18.4013, note: "poczatek polwyspu" },
-  { name: "Chalupy", lat: 54.7604, lng: 18.5109, note: "awaryjnie na polwyspie" },
-  { name: "Jastarnia", lat: 54.6965, lng: 18.6788, note: "srodek polwyspu" },
-  { name: "Jurata", lat: 54.6764, lng: 18.7187, note: "blisko koncowki" },
-  { name: "Hel", lat: 54.6081, lng: 18.8014, note: "koniec trasy" },
+  { name: "Swinoujscie", lat: 53.9106, lng: 14.2474, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Swinoujscie Port", lat: 53.9069, lng: 14.2621, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Swinoujscie Przytor", lat: 53.8957, lng: 14.3573, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Swinoujscie Lunowo", lat: 53.8955, lng: 14.4004, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Miedzyzdroje", lat: 53.9294, lng: 14.4508, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Lubiewo", lat: 53.9104, lng: 14.495, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Warnowo", lat: 53.8847, lng: 14.5762, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Ladzin", lat: 53.8767, lng: 14.6542, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Wolin Pomorski", lat: 53.8446, lng: 14.6155, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Wysoka Kamienska", lat: 53.8785, lng: 14.8031, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Kamien Pomorski", lat: 53.9689, lng: 14.7736, line: "Swinoujscie - Miedzyzdroje - Kamien Pomorski" },
+  { name: "Trzebiatow", lat: 54.0611, lng: 15.2684, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Kolobrzeg", lat: 54.1803, lng: 15.5688, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Kolobrzeg Stadion", lat: 54.1747, lng: 15.5919, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Ustronie Morskie", lat: 54.2154, lng: 15.7568, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Tymien", lat: 54.212, lng: 15.88, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Bedzino", lat: 54.2011, lng: 15.9948, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Mscice", lat: 54.2068, lng: 16.0612, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Mielno Koszalinskie", lat: 54.2532, lng: 16.0546, line: "Koszalin - Mielno" },
+  { name: "Koszalin", lat: 54.1906, lng: 16.1817, line: "Trzebiatow - Kolobrzeg - Koszalin" },
+  { name: "Slawno", lat: 54.3619, lng: 16.6787, line: "Slawno - Darlowo" },
+  { name: "Stary Jaroslaw", lat: 54.3935, lng: 16.5469, line: "Slawno - Darlowo" },
+  { name: "Darlowo", lat: 54.4209, lng: 16.4098, line: "Slawno - Darlowo" },
+  { name: "Slupsk", lat: 54.4642, lng: 17.0287, line: "Slupsk - Ustka" },
+  { name: "Slupsk Polnocny", lat: 54.4882, lng: 17.0278, line: "Slupsk - Ustka" },
+  { name: "Slupsk Strefa", lat: 54.5028, lng: 17.0202, line: "Slupsk - Ustka" },
+  { name: "Galezinowo", lat: 54.5336, lng: 16.9707, line: "Slupsk - Ustka" },
+  { name: "Charnowo Slupskie", lat: 54.5559, lng: 16.9312, line: "Slupsk - Ustka" },
+  { name: "Mokrzyca", lat: 54.5655, lng: 16.9099, line: "Slupsk - Ustka" },
+  { name: "Ustka Osiedle", lat: 54.5731, lng: 16.8837, line: "Slupsk - Ustka" },
+  { name: "Ustka Uroczysko", lat: 54.5765, lng: 16.873, line: "Slupsk - Ustka" },
+  { name: "Ustka", lat: 54.5805, lng: 16.8619, line: "Slupsk - Ustka" },
+  { name: "Lebork", lat: 54.5382, lng: 17.7477, line: "Lebork - Leba" },
+  { name: "Lebork Nowy Swiat", lat: 54.5571, lng: 17.7337, line: "Lebork - Leba" },
+  { name: "Nowa Wies Leborska", lat: 54.5757, lng: 17.7197, line: "Lebork - Leba" },
+  { name: "Garczegorze", lat: 54.5967, lng: 17.7237, line: "Lebork - Leba" },
+  { name: "Ledziechowo", lat: 54.6267, lng: 17.6657, line: "Lebork - Leba" },
+  { name: "Wrzesie", lat: 54.6617, lng: 17.6213, line: "Lebork - Leba" },
+  { name: "Steknica", lat: 54.7059, lng: 17.603, line: "Lebork - Leba" },
+  { name: "Leba", lat: 54.7589, lng: 17.5575, line: "Lebork - Leba" },
+  { name: "Wladyslawowo", lat: 54.7917, lng: 18.4013, line: "Wladyslawowo - Hel" },
+  { name: "Wladyslawowo Port", lat: 54.7929, lng: 18.4172, line: "Wladyslawowo - Hel" },
+  { name: "Chalupy", lat: 54.7604, lng: 18.5109, line: "Wladyslawowo - Hel" },
+  { name: "Kuznica (Hel)", lat: 54.7357, lng: 18.5843, line: "Wladyslawowo - Hel" },
+  { name: "Jastarnia Wczasy", lat: 54.7006, lng: 18.6634, line: "Wladyslawowo - Hel" },
+  { name: "Jastarnia", lat: 54.6965, lng: 18.6788, line: "Wladyslawowo - Hel" },
+  { name: "Jurata", lat: 54.6764, lng: 18.7187, line: "Wladyslawowo - Hel" },
+  { name: "Hel Bor", lat: 54.6302, lng: 18.7791, line: "Wladyslawowo - Hel" },
+  { name: "Hel", lat: 54.6081, lng: 18.8014, line: "Wladyslawowo - Hel" },
 ];
+
+const railLines = [
+  {
+    name: "Swinoujscie - Miedzyzdroje - Kamien Pomorski",
+    stations: [
+      "Swinoujscie",
+      "Swinoujscie Port",
+      "Swinoujscie Przytor",
+      "Swinoujscie Lunowo",
+      "Miedzyzdroje",
+      "Lubiewo",
+      "Warnowo",
+      "Ladzin",
+      "Wolin Pomorski",
+      "Wysoka Kamienska",
+      "Kamien Pomorski",
+    ],
+  },
+  {
+    name: "Trzebiatow - Kolobrzeg - Koszalin",
+    stations: [
+      "Trzebiatow",
+      "Kolobrzeg",
+      "Kolobrzeg Stadion",
+      "Ustronie Morskie",
+      "Tymien",
+      "Bedzino",
+      "Mscice",
+      "Koszalin",
+    ],
+  },
+  { name: "Koszalin - Mielno", stations: ["Koszalin", "Mscice", "Mielno Koszalinskie"] },
+  { name: "Slawno - Darlowo", stations: ["Slawno", "Stary Jaroslaw", "Darlowo"] },
+  {
+    name: "Slupsk - Ustka",
+    stations: [
+      "Slupsk",
+      "Slupsk Polnocny",
+      "Slupsk Strefa",
+      "Galezinowo",
+      "Charnowo Slupskie",
+      "Mokrzyca",
+      "Ustka Osiedle",
+      "Ustka Uroczysko",
+      "Ustka",
+    ],
+  },
+  {
+    name: "Lebork - Leba",
+    stations: [
+      "Lebork",
+      "Lebork Nowy Swiat",
+      "Nowa Wies Leborska",
+      "Garczegorze",
+      "Ledziechowo",
+      "Wrzesie",
+      "Steknica",
+      "Leba",
+    ],
+  },
+  {
+    name: "Wladyslawowo - Hel",
+    stations: [
+      "Wladyslawowo",
+      "Wladyslawowo Port",
+      "Chalupy",
+      "Kuznica (Hel)",
+      "Jastarnia Wczasy",
+      "Jastarnia",
+      "Jurata",
+      "Hel Bor",
+      "Hel",
+    ],
+  },
+];
+
+const stationByName = new Map(trainStations.map((station) => [station.name, station]));
 
 let map;
 let bounds;
@@ -131,6 +240,7 @@ let segmentPolylines = [];
 let overviewPolyline;
 let attractionMarkers = [];
 let trainStationMarkers = [];
+let railLinePolylines = [];
 let routePath = [];
 let segmentRoutePaths = segments.map((segment) => segment.waypoints);
 let isFullRouteSelected = false;
@@ -372,6 +482,39 @@ function addAttractionMarkers() {
 }
 
 function addTrainStationMarkers() {
+  railLinePolylines = railLines.map((line) => {
+    const path = line.stations
+      .map((stationName) => stationByName.get(stationName))
+      .filter(Boolean)
+      .map((station) => ({ lat: station.lat, lng: station.lng }));
+
+    const polyline = new google.maps.Polyline({
+      path,
+      geodesic: true,
+      strokeColor: "#2766ad",
+      strokeOpacity: 0.74,
+      strokeWeight: 3,
+      icons: [
+        {
+          icon: {
+            path: "M 0,-1 0,1",
+            strokeOpacity: 1,
+            scale: 3,
+          },
+          offset: "0",
+          repeat: "14px",
+        },
+      ],
+    });
+    polyline.addListener("click", (event) => {
+      new google.maps.InfoWindow({
+        content: `<strong>${line.name}</strong><br><span>Linia kolejowa przy trasie rowerowej</span>`,
+        position: event.latLng,
+      }).open({ map });
+    });
+    return polyline;
+  });
+
   trainStationMarkers = trainStations.map((station) => {
     const pin = new PinElement({
       background: "#2766ad",
@@ -387,7 +530,7 @@ function addTrainStationMarkers() {
       gmpClickable: true,
     });
     const info = new google.maps.InfoWindow({
-      content: `<strong>PKP ${station.name}</strong><br><span>${station.note}</span>`,
+      content: `<strong>PKP ${station.name}</strong><br><span>${station.line}</span>`,
     });
     marker.addEventListener("gmp-click", () => info.open({ anchor: marker, map }));
     return marker;
@@ -396,6 +539,9 @@ function addTrainStationMarkers() {
 }
 
 function setTrainStationsVisible(isVisible) {
+  railLinePolylines.forEach((polyline) => {
+    polyline.setMap(isVisible ? map : null);
+  });
   trainStationMarkers.forEach((marker) => {
     marker.map = isVisible ? map : null;
   });
