@@ -738,7 +738,6 @@ function drawElevation(values) {
     return sum + Math.max(0, values[index - 1] - value);
   }, 0);
 
-  document.getElementById("totalClimb").textContent = `${Math.round(climb)} m`;
   document.getElementById("elevationStats").innerHTML = `
     <span>min: ${Math.round(min)} m</span>
     <span>max: ${Math.round(max)} m</span>
