@@ -243,6 +243,7 @@ let trainStationMarkers = [];
 let railLinePolylines = [];
 let routePath = [];
 let segmentRoutePaths = segments.map((segment) => segment.waypoints);
+let segmentDistances = segments.map((segment) => segment.distance);
 let isFullRouteSelected = false;
 let elevationRequestId = 0;
 let AdvancedMarkerElement;
@@ -251,10 +252,6 @@ let ElevationService;
 let Route;
 
 function initStaticUi() {
-  const totalDistance = segments.reduce((sum, segment) => sum + segment.distance, 0);
-  const maxDistance = Math.max(...segments.map((segment) => segment.distance));
-  document.getElementById("totalDistance").textContent = `~${totalDistance} km`;
-
   const segmentList = document.getElementById("segmentList");
   segmentList.innerHTML = segments
     .map(
@@ -262,7 +259,7 @@ function initStaticUi() {
         <button class="segment-button" type="button" data-index="${index}" style="--segment-color: ${segment.color}">
           <span class="segment-top">
             <span class="segment-date">${segment.date}</span>
-            <span class="segment-distance">~${segment.distance} km</span>
+            <span class="segment-distance" data-segment-distance="${index}">~${formatDistance(segment.distance)} km</span>
           </span>
           <span class="segment-route">${segment.title}</span>
           <span class="segment-priority">${segment.priority} · ${segment.character}</span>
@@ -275,17 +272,7 @@ function initStaticUi() {
     button.addEventListener("click", () => focusSegment(Number(button.dataset.index)));
   });
 
-  document.getElementById("distanceBars").innerHTML = segments
-    .map(
-      (segment) => `
-        <div class="bar-row" style="--segment-color: ${segment.color}; --bar-width: ${(segment.distance / maxDistance) * 100}%">
-          <span>${segment.date.split(" ")[0]}</span>
-          <span class="bar-track"><span class="bar-fill"></span></span>
-          <span>${segment.distance} km / ${formatRideTime(segment.distance)}</span>
-        </div>
-      `,
-    )
-    .join("");
+  updateDistanceUi(segmentDistances, true);
 
   document.getElementById("attractions").innerHTML = segments
     .map(
@@ -304,6 +291,35 @@ function initStaticUi() {
     setTrainStationsVisible(event.target.checked);
   });
   drawEmptyElevation();
+}
+
+function updateDistanceUi(distances, isEstimate = false) {
+  segmentDistances = distances;
+  const totalDistance = distances.reduce((sum, distance) => sum + distance, 0);
+  const maxDistance = Math.max(...distances);
+  const prefix = isEstimate ? "~" : "";
+
+  document.getElementById("totalDistance").textContent = `${prefix}${formatDistance(totalDistance)} km`;
+  document.querySelectorAll("[data-segment-distance]").forEach((element) => {
+    const index = Number(element.dataset.segmentDistance);
+    element.textContent = `${prefix}${formatDistance(distances[index])} km`;
+  });
+
+  document.getElementById("distanceBars").innerHTML = segments
+    .map(
+      (segment, index) => `
+        <div class="bar-row" style="--segment-color: ${segment.color}; --bar-width: ${(distances[index] / maxDistance) * 100}%">
+          <span>${segment.date.split(" ")[0]}</span>
+          <span class="bar-track"><span class="bar-fill"></span></span>
+          <span>${formatDistance(distances[index])} km / ${formatRideTime(distances[index])}</span>
+        </div>
+      `,
+    )
+    .join("");
+}
+
+function formatDistance(distanceKm) {
+  return String(Math.round(distanceKm));
 }
 
 function formatRideTime(distanceKm) {
@@ -387,22 +403,29 @@ function requestRoutes() {
   if (!Route) {
     routePath = routePoints;
     segmentRoutePaths = segments.map((segment) => segment.waypoints);
+    updateDistanceUi(segments.map((segment) => segment.distance), true);
     updateElevationForCurrentSelection();
     return;
   }
 
-  Promise.all(segments.map((segment) => getSegmentRoute(segment))).then((paths) => {
-      const resolvedPaths = paths.map((path, index) =>
-        path.length ? path : segments[index].waypoints,
+  Promise.all(segments.map((segment) => getSegmentRoute(segment))).then((routeResults) => {
+      const resolvedPaths = routeResults.map((result, index) =>
+        result.path.length ? result.path : segments[index].waypoints,
+      );
+      const resolvedDistances = routeResults.map((result, index) =>
+        result.distanceKm || segments[index].distance,
       );
       segmentRoutePaths = resolvedPaths;
       routePath = resolvedPaths.flat();
 
-      if (!paths.some((path) => path.length)) {
+      if (!routeResults.some((result) => result.path.length)) {
         routePath = routePoints;
+        updateDistanceUi(segments.map((segment) => segment.distance), true);
         updateElevationForCurrentSelection();
         return;
       }
+
+      updateDistanceUi(resolvedDistances);
 
       segmentPolylines.forEach((polyline) => polyline.setMap(null));
       overviewPolyline.setMap(null);
@@ -444,15 +467,18 @@ async function getSegmentRoute(segment) {
       destination: { lat: destination.lat, lng: destination.lng },
       intermediates: waypoints,
       travelMode: "BICYCLING",
-      fields: ["path"],
+      fields: ["distanceMeters", "path"],
       language: "pl",
       region: "PL",
     });
 
-    return routes?.[0]?.path?.map(normalizePoint) ?? [];
+    return {
+      path: routes?.[0]?.path?.map(normalizePoint) ?? [],
+      distanceKm: routes?.[0]?.distanceMeters ? routes[0].distanceMeters / 1000 : null,
+    };
   } catch (error) {
     console.warn(`Route.computeRoutes failed for ${segment.title}.`, error);
-    return [];
+    return { path: [], distanceKm: null };
   }
 }
 
