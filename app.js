@@ -614,20 +614,21 @@ function showFullRoute() {
 function updateElevationForCurrentSelection() {
   if (isFullRouteSelected) {
     updateElevationTitle("cala trasa");
-    requestElevation(routePath.length ? routePath : routePoints, routePoints);
+    const totalDistance = segmentDistances.reduce((sum, distance) => sum + distance, 0);
+    requestElevation(routePath.length ? routePath : routePoints, routePoints, totalDistance);
     return;
   }
 
   updateElevationTitle(segments[activeSegment].title);
   const segmentPath = segmentRoutePaths[activeSegment] || segments[activeSegment].waypoints;
-  requestElevation(segmentPath, segments[activeSegment].waypoints);
+  requestElevation(segmentPath, segments[activeSegment].waypoints, segmentDistances[activeSegment]);
 }
 
 function updateElevationTitle(scope) {
   document.getElementById("elevationTitle").textContent = `Profil terenu - ${scope}`;
 }
 
-function requestElevation(path, fallbackPath = null, requestId = ++elevationRequestId) {
+function requestElevation(path, fallbackPath = null, distanceKm = null, requestId = ++elevationRequestId) {
   if (!ElevationService || !path.length) {
     drawEmptyElevation("Biblioteka Elevation nie zostala zaladowana.");
     return;
@@ -652,13 +653,13 @@ function requestElevation(path, fallbackPath = null, requestId = ++elevationRequ
           console.warn(
             `ElevationService failed for detailed route (${status}). Retrying with planned stops.`,
           );
-          requestElevation(fallbackPath, null, requestId);
+          requestElevation(fallbackPath, null, distanceKm, requestId);
           return;
         }
         showElevationError(status);
         return;
       }
-      drawElevation(results.map((point) => point.elevation));
+      drawElevation(results.map((point) => point.elevation), distanceKm);
     },
   );
 }
@@ -708,12 +709,14 @@ function showElevationError(status) {
   console.warn("ElevationService.getElevationAlongPath failed:", status);
 }
 
-function drawElevation(values) {
+function drawElevation(values, distanceKm = null) {
   const canvas = document.getElementById("elevationCanvas");
   const ctx = canvas.getContext("2d");
   const width = canvas.width;
   const height = canvas.height;
-  const padding = 30;
+  const padding = { top: 24, right: 24, bottom: 46, left: 58 };
+  const plotWidth = width - padding.left - padding.right;
+  const plotHeight = height - padding.top - padding.bottom;
   const min = Math.min(...values);
   const max = Math.max(...values);
   const range = Math.max(max - min, 1);
@@ -724,30 +727,52 @@ function drawElevation(values) {
   ctx.strokeStyle = "#d8d2c8";
   ctx.lineWidth = 1;
   for (let i = 0; i < 4; i += 1) {
-    const y = padding + ((height - padding * 2) / 3) * i;
+    const y = padding.top + (plotHeight / 3) * i;
+    const labelValue = max - (range / 3) * i;
     ctx.beginPath();
-    ctx.moveTo(padding, y);
-    ctx.lineTo(width - padding, y);
+    ctx.moveTo(padding.left, y);
+    ctx.lineTo(width - padding.right, y);
     ctx.stroke();
+    ctx.fillStyle = "#687478";
+    ctx.font = "600 12px Inter, sans-serif";
+    ctx.textAlign = "right";
+    ctx.textBaseline = "middle";
+    ctx.fillText(`${Math.round(labelValue)} m`, padding.left - 8, y);
+  }
+
+  const xMax = distanceKm || values.length - 1;
+  ctx.strokeStyle = "#d8d2c8";
+  for (let i = 0; i < 5; i += 1) {
+    const x = padding.left + (plotWidth / 4) * i;
+    const labelValue = (xMax / 4) * i;
+    ctx.beginPath();
+    ctx.moveTo(x, padding.top);
+    ctx.lineTo(x, height - padding.bottom);
+    ctx.stroke();
+    ctx.fillStyle = "#687478";
+    ctx.font = "600 12px Inter, sans-serif";
+    ctx.textAlign = "center";
+    ctx.textBaseline = "top";
+    ctx.fillText(`${Math.round(labelValue)} km`, x, height - padding.bottom + 10);
   }
 
   ctx.beginPath();
   values.forEach((value, index) => {
-    const x = padding + (index / (values.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((value - min) / range) * (height - padding * 2);
+    const x = padding.left + (index / (values.length - 1)) * plotWidth;
+    const y = height - padding.bottom - ((value - min) / range) * plotHeight;
     if (index === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
-  ctx.lineTo(width - padding, height - padding);
-  ctx.lineTo(padding, height - padding);
+  ctx.lineTo(width - padding.right, height - padding.bottom);
+  ctx.lineTo(padding.left, height - padding.bottom);
   ctx.closePath();
   ctx.fillStyle = "rgba(22, 127, 140, 0.18)";
   ctx.fill();
 
   ctx.beginPath();
   values.forEach((value, index) => {
-    const x = padding + (index / (values.length - 1)) * (width - padding * 2);
-    const y = height - padding - ((value - min) / range) * (height - padding * 2);
+    const x = padding.left + (index / (values.length - 1)) * plotWidth;
+    const y = height - padding.bottom - ((value - min) / range) * plotHeight;
     if (index === 0) ctx.moveTo(x, y);
     else ctx.lineTo(x, y);
   });
