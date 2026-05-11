@@ -10,9 +10,12 @@ const segments = [
     stops: ["Stawa Mlyny", "Wolinski Park Narodowy", "Klify w Miedzyzdrojach", "Gosan"],
     waypoints: [
       { name: "Swinoujscie", lat: 53.9105, lng: 14.2471 },
-      { name: "Miedzyzdroje", lat: 53.9297, lng: 14.4506 },
-      { name: "Gosan", lat: 53.9437, lng: 14.5102 },
-      { name: "Dziwnow", lat: 54.0258, lng: 14.7669 },
+      //{ name: "Miedzyzdroje", lat: 53.9297, lng: 14.4506 },
+      //{ name: "Gosan", lat: 53.9437, lng: 14.5102 },
+      //{ name: "Dziwnow", lat: 54.0258, lng: 14.7669 },53.966918677421226, 14.533440318852666
+      { name: "Grodno", lat: 53.9669, lng: 14.5334 },
+      { name: "Kolczewo", lat: 53.9650, lng: 14.6137 },
+      
       { name: "Rewal", lat: 54.0812, lng: 15.0147 },
     ],
   },
@@ -25,7 +28,6 @@ const segments = [
     stops: ["Ruiny kosciola w Trzesaczu", "Latarnia w Niechorzu", "Port w Kolobrzegu", "Jezioro Jamno"],
     waypoints: [
       { name: "Rewal", lat: 54.0812, lng: 15.0147 },
-      { name: "Trzesacz", lat: 54.0778, lng: 14.9918 },
       { name: "Niechorze", lat: 54.0961, lng: 15.0807 },
       { name: "Kolobrzeg", lat: 54.1759, lng: 15.5833 },
       { name: "Mielno", lat: 54.2609, lng: 16.0622 },
@@ -40,7 +42,6 @@ const segments = [
     stops: ["Promenada w Mielnie", "Sarbinowo i Chlopy", "Zamek w Darlowie", "Port w Darlowku"],
     waypoints: [
       { name: "Mielno", lat: 54.2609, lng: 16.0622 },
-      { name: "Sarbinowo", lat: 54.2475, lng: 15.957 },
       { name: "Darlowo", lat: 54.421, lng: 16.4107 },
       { name: "Darlowko", lat: 54.4417, lng: 16.3797 },
       { name: "Jaroslawiec", lat: 54.5417, lng: 16.5422 },
@@ -57,7 +58,6 @@ const segments = [
       { name: "Jaroslawiec", lat: 54.5417, lng: 16.5422 },
       { name: "Ustka", lat: 54.5805, lng: 16.8619 },
       { name: "Rowy", lat: 54.6652, lng: 17.0547 },
-      { name: "Kluki", lat: 54.6649, lng: 17.3355 },
       { name: "Smoldzino", lat: 54.6636, lng: 17.2136 },
     ],
   },
