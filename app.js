@@ -6,8 +6,14 @@ const segments = [
     title: "Swinoujscie - Rewal",
     distance: 60,
     character: "sredni start",
-    priority: "Miedzyzdroje + klify",
-    stops: ["Stawa Mlyny", "Wolinski Park Narodowy", "Klify w Miedzyzdrojach", "Gosan"],
+    priority: "Wolinski PN + klify",
+    stops: [
+      "Stawa Mlyny raczej odpuscic: jest po drugiej stronie Swiny, prom zabierze czas, tunelem nie wolno rowerem",
+      "Wiecej czasu na Wolinski Park Narodowy i klify, jesli pogoda dopisze",
+      "Gora Gosan jako naturalny postoj widokowy",
+      "Opcjonalnie krotki szlak przez Kawcza Gore",
+      "Trzesacz jest przed Rewalem: dobry postoj wieczorem po drodze albo rano, jesli nocleg wypadnie w Pobierowie",
+    ],
     waypoints: [
       { name: "Swinoujscie", lat: 53.9105, lng: 14.2471 },
       //{ name: "Miedzyzdroje", lat: 53.9297, lng: 14.4506 },
@@ -15,7 +21,6 @@ const segments = [
       //{ name: "Dziwnow", lat: 54.0258, lng: 14.7669 },53.966918677421226, 14.533440318852666
       { name: "Grodno", lat: 53.9669, lng: 14.5334 },
       { name: "Kolczewo", lat: 53.9650, lng: 14.6137 },
-      
       { name: "Rewal", lat: 54.0812, lng: 15.0147 },
     ],
   },
@@ -24,8 +29,14 @@ const segments = [
     title: "Rewal - Kolobrzeg - Mielno",
     distance: 82,
     character: "pelny etap",
-    priority: "Trzesacz + Kolobrzeg",
-    stops: ["Ruiny kosciola w Trzesaczu", "Latarnia w Niechorzu", "Port w Kolobrzegu", "Jezioro Jamno"],
+    priority: "Niechorze + Kolobrzeg",
+    stops: [
+      "Jesli Trzesacz nie wejdzie dnia 1, mozna podjechac rano przy noclegu w Pobierowie/Rewalu",
+      "Latarnia w Niechorzu",
+      "Mrzezyno jako spokojniejszy postoj na trasie",
+      "Kolobrzeg: port, molo, latarnia i dluzsza przerwa na jedzenie",
+      "Jezioro Jamno zostawic na dzien 3, bo jest juz za Mielnem",
+    ],
     waypoints: [
       { name: "Rewal", lat: 54.0812, lng: 15.0147 },
       { name: "Niechorze", lat: 54.0961, lng: 15.0807 },
@@ -38,8 +49,13 @@ const segments = [
     title: "Mielno - Darlowo - Jaroslawiec",
     distance: 82,
     character: "pelny etap",
-    priority: "Darlowko + port",
-    stops: ["Promenada w Mielnie", "Sarbinowo i Chlopy", "Zamek w Darlowie", "Port w Darlowku"],
+    priority: "Jamno + Darlowko",
+    stops: [
+      "Jezioro Jamno po starcie z Mielna",
+      "Promenada w Mielnie, jesli nie bylo czasu poprzedniego dnia",
+      "Darlowo: zamek ksiazat pomorskich",
+      "Darlowko: port, most i nadmorska przerwa",
+    ],
     waypoints: [
       { name: "Mielno", lat: 54.2609, lng: 16.0622 },
       { name: "Darlowo", lat: 54.421, lng: 16.4107 },
@@ -52,8 +68,14 @@ const segments = [
     title: "Jaroslawiec - Ustka - Smoldzino",
     distance: 78,
     character: "terenowo-logistyczny",
-    priority: "Ustka + Rowy",
-    stops: ["Latarnia w Jaroslawcu", "Port i promenada w Ustce", "Bunkry Bluchera", "Rowy"],
+    priority: "Ustka + Gardno",
+    stops: [
+      "Ustka: port, promenada, latarnia i bunkry Bluchera",
+      "Za Wytownem wariant do rozwazenia: szlak zwienietych torow zamiast klasycznego R10 przez Poddabie",
+      "Szlak dawnej kolei daje nasypy, widoki i dojazd w strone Gardnej Wielkiej",
+      "Wariant przez Gardna Wielka prowadzi poludniowa strona jeziora Gardno",
+      "Nocleg do sprawdzenia: Ptasia Osada Gardna, ptasiaosadagardna.pl",
+    ],
     waypoints: [
       { name: "Jaroslawiec", lat: 54.5417, lng: 16.5422 },
       { name: "Ustka", lat: 54.5805, lng: 16.8619 },
@@ -66,8 +88,14 @@ const segments = [
     title: "Smoldzino - Leba - Karwia",
     distance: 92,
     character: "kluczowy dzien",
-    priority: "wydmy + Leba",
-    stops: ["Skansen Slowincow w Klukach", "Jezioro Lebsko", "Ruchome wydmy", "Latarnia Stilo", "Debki"],
+    priority: "wydmy + wariant Lebsko",
+    stops: [
+      "Klasyczny R10 idzie poludniem jeziora Lebsko: wtedy do wydm od strony Leby trzeba sie cofnac",
+      "Wariant polnocny: Wydma Czolpinska, prowadzenie rowerow przez wydmy i ok. 11 km plazy",
+      "Wariant polnocny moze skrocic dzien o ok. 23 km, ale odpada skansen w Klukach",
+      "Wariant poludniowy: Kluki i skansen Slowincow, potem Leba i ruchome wydmy",
+      "Rozwazyc nocleg wczesniej niz Karwia, zeby nie gonic tego dnia",
+    ],
     waypoints: [
       { name: "Smoldzino", lat: 54.6636, lng: 17.2136 },
       { name: "Kluki", lat: 54.6649, lng: 17.3355 },
@@ -84,7 +112,13 @@ const segments = [
     distance: 70,
     character: "finisz + transfer",
     priority: "Rozewie + Hel",
-    stops: ["Gwiazda Polnocy", "Latarnia Rozewie", "Sciezka przez Polwysep Helski", "Jurata", "Fokarium i cypel Helu"],
+    stops: [
+      "Jastrzebia Gora i Gwiazda Polnocy",
+      "Latarnia Rozewie",
+      "Sciezka przez Polwysep Helski: Chalupy, Jastarnia, Jurata",
+      "Hel: fokarium, port i cypel",
+      "Prom Hel - Gdynia w sobote: 11:30, 15:00, 18:00; Gdansk/Sopot tylko jesli chcecie zmienic cel transferu",
+    ],
     waypoints: [
       { name: "Karwia", lat: 54.8306, lng: 18.2108 },
       { name: "Jastrzebia Gora", lat: 54.8314, lng: 18.3136 },
